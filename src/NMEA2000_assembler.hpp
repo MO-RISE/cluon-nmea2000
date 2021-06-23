@@ -17,7 +17,6 @@
 #include <chrono>  // NOLINT
 #include <functional>
 #include <numeric>
-#include <regex>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -48,7 +47,6 @@ class NMEA2000FrameAssembler {
 
     // Handle any fully received lines
     std::string line;
-    std::smatch match;
     while (std::getline(buffer, line, '\n')) {
       if (buffer.eof()) {
         // If we run out of buffer, we dont have a full line and bail
