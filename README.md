@@ -37,7 +37,7 @@ services:
         network_mode: "host"
         volumes:
         - .:/opt/cluon-nmea2000
-        command: "--cid 111 --path /opt/cluon-nmea2000/recordings/record.log log"
+        command: "--cid 111 --path /opt/cluon-nmea2000/recordings/nmea2000.log log"
 ```
 
 ## Details
