@@ -9,7 +9,7 @@ A [libcluon](https://github.com/chrberger/libcluon)-based microservice for eaves
 * `log`, listen to an OD4 session for raw NMEA2000 frames from other `gatherers` and dump these to an aggregated log file on disk
 
 ## How do I get it?
-Each release of `cluon-nmea2000` is published as a docker image [here](https://github.com/orgs/RISE-MO/packages/container/package/cluon-nmea2000) and is publicly available.
+Each release of `cluon-nmea2000` is published as a docker image [here](https://github.com/orgs/MO-RISE/packages/container/package/cluon-nmea2000) and is publicly available.
 
 Can also be used as a standalone commandline tool. No pre-built binaries are, however, provided for this purpose.
 
@@ -20,19 +20,19 @@ version: '2'
 services:    
     gatherer_1:
         container_name: cluon-nmea2000-gatherer-1
-        image: ghcr.io/rise-mo/cluon-nmea2000:v0.1.0
+        image: ghcr.io/mo-rise/cluon-nmea2000:v0.1.0
         restart: on-failure
         network_mode: "host"
         command: "--cid 111 --id 1 gather --udp -a 255.255.255.255 -p 1457"
     gatherer_2:
         container_name: cluon-nmea2000-gatherer-2
-        image: ghcr.io/rise-mo/cluon-nmea2000:v0.1.0
+        image: ghcr.io/mo-rise/cluon-nmea2000:v0.1.0
         restart: on-failure
         network_mode: "host"
         command: "--cid 111 --id 2 gather -a 171.31.16.42 -p 6002"
     logger:
         container_name: cluon-nmea2000-logger
-        image: ghcr.io/rise-mo/cluon-nmea2000:v0.1.0
+        image: ghcr.io/mo-rise/cluon-nmea2000:v0.1.0
         restart: on-failure
         network_mode: "host"
         volumes:
@@ -43,7 +43,7 @@ services:
 ## Details
 
 ### Message set
-This microservice introduce a new OD4-compatible message type (`raw.NMEA2000`) in the `risemo` message set. See https://github.com/RISE-MO/risemo-message-set for details.
+This microservice introduce a new OD4-compatible message type (`raw.NMEA2000`) in the `risemo` message set. See https://github.com/MO-RISE/risemo-message-set for details.
 
 ### Build from source
 This repository makes use of [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) for dependency resolution as an interal part of the CMake setup. As a result, the only requirements for building from source are:
