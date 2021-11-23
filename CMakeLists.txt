@@ -18,7 +18,6 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 CPMAddPackage("gh:CLIUtils/CLI11@1.9.1")
-CPMAddPackage("gh:gabime/spdlog@1.8.2")
 
 CPMAddPackage(
   NAME cluon
@@ -31,9 +30,9 @@ CPMAddPackage(
 )
 
 CPMAddPackage(
-  NAME morise-brefv
-  GITHUB_REPOSITORY MO-RISE/brefv
-  VERSION 0.4.0
+  NAME memo
+  GITHUB_REPOSITORY MO-RISE/memo
+  VERSION 0.3.0
   GIT_SHALLOW YES
   DOWNLOAD_ONLY YES
 )
@@ -43,7 +42,7 @@ add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/message_specifications
   DEPENDS cluon
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/message_specifications
-  COMMAND cluon-msc --cpp --out=${CMAKE_CURRENT_BINARY_DIR}/message_specifications/morise-brefv.hpp ${morise-brefv_SOURCE_DIR}/morise-brefv.odvd
+  COMMAND cluon-msc --cpp --out=${CMAKE_CURRENT_BINARY_DIR}/message_specifications/memo.hpp ${memo_SOURCE_DIR}/memo.odvd
 )
 add_custom_target(
   generate_message_specifications
@@ -62,7 +61,7 @@ target_include_directories(${PROJECT_NAME}
   # compiled message specifications for this project
   ${CMAKE_CURRENT_BINARY_DIR}/message_specifications
 )
-target_link_libraries(${PROJECT_NAME} Threads::Threads cluon-static CLI11 spdlog::spdlog_header_only)
+target_link_libraries(${PROJECT_NAME} Threads::Threads cluon-static CLI11)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 add_dependencies(${PROJECT_NAME} generate_message_specifications)
 

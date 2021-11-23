@@ -2,11 +2,7 @@
 
 Copyright 2021 RISE Research Institute of Sweden - Maritime Operations. Licensed under the Apache License Version 2.0. For details, please contact Fredrik Olsson (fredrik.x.olsson(at)ri.se).
 
-A [libcluon](https://github.com/chrberger/libcluon)-based microservice for eavesdropping on a NMEA2000 stream over either UDP or TCP. This software does not perform any parsing of the NMEA frames, merely assembles any fragmented messages into full frames. It can be run in two modes:
-* `gather`, connect to a stream of incoming NMEA2000 frames and either:
-  * publish to an OD4 session, or
-  * log directly to disk (`--standalone`)
-* `log`, listen to an OD4 session for raw NMEA2000 frames from other `gatherers` and dump these to an aggregated log file on disk
+A [libcluon](https://github.com/chrberger/libcluon)-based microservice for eavesdropping on a NMEA2000 stream over either UDP or TCP. This software does not perform any parsing or validation of the N2k frames, merely acts as a one-way bridge to a libcluon group.
 
 ## How do I get it?
 Each release of `cluon-nmea2000` is published as a docker image [here](https://github.com/orgs/MO-RISE/packages/container/package/cluon-nmea2000) and is publicly available.
@@ -18,32 +14,24 @@ The example below showcases a setup with two gatherers (listening on two separat
 ```yaml
 version: '2'
 services:    
-    gatherer_1:
-        container_name: cluon-nmea2000-gatherer-1
-        image: ghcr.io/mo-rise/cluon-nmea2000:v0.1.0
+    listener_1:
+        container_name: cluon-nmea2000-listener-1
+        image: ghcr.io/mo-rise/cluon-nmea2000:v0.3.0
         restart: on-failure
         network_mode: "host"
-        command: "--cid 111 --id 1 gather --udp -a 255.255.255.255 -p 1457"
-    gatherer_2:
-        container_name: cluon-nmea2000-gatherer-2
-        image: ghcr.io/mo-rise/cluon-nmea2000:v0.1.0
+        command: "--cid 111 --id 1 --udp -a 255.255.255.255 -p 1457"
+    listener_2:
+        container_name: cluon-nmea2000-listener-2
+        image: ghcr.io/mo-rise/cluon-nmea2000:v0.3.0
         restart: on-failure
         network_mode: "host"
-        command: "--cid 111 --id 2 gather -a 171.31.16.42 -p 6002"
-    logger:
-        container_name: cluon-nmea2000-logger
-        image: ghcr.io/mo-rise/cluon-nmea2000:v0.1.0
-        restart: on-failure
-        network_mode: "host"
-        volumes:
-        - .:/opt/cluon-nmea2000
-        command: "--cid 111 --path /opt/cluon-nmea2000/recordings/nmea2000.log log"
+        command: "--cid 111 --id 2 -a 171.31.16.42 -p 6002"
 ```
 
 ## Details
 
 ### Message set
-Makes use of the public message set for maritime applications: https://github.com/MO-RISE/brefv
+Makes use of the public message set for maritime applications: https://github.com/MO-RISE/memo
 
 ### Build from source
 This repository makes use of [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) for dependency resolution as an interal part of the CMake setup. As a result, the only requirements for building from source are:
@@ -53,7 +41,6 @@ This repository makes use of [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake)
 As part of the CMake configuration step, the following dependencies are downloaded and configured:
 * [libcluon](https://github.com/chrberger/libcluon)
 * [CLI11](https://github.com/CLIUtils/CLI11)
-* [spdlog](https://github.com/gabime/spdlog)
 * [doctest](https://github.com/onqtam/doctest) (for testing only)
 
 To build (from the root directory of this repo):
@@ -71,8 +58,6 @@ To run tests (after successful build):
 cd build
 ctest -C Debug -T test --output-on-failure --
 ```
-
-A simple integration test can also be done by running the compiled commandline tool (cluon-nmea2000) in conjunction with the provided python script `fake_nmea_stream_udp.py` in the `tests` folder.
 
 ### Development setup
 This repo contains some configuration files (in the `.vscode`-folder) for getting started easy on the following setup:
