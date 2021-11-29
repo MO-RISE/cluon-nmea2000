@@ -69,7 +69,7 @@ add_dependencies(${PROJECT_NAME} generate_message_specifications)
 CPMAddPackage("gh:onqtam/doctest#2.4.0")
 
 enable_testing()
-add_executable(${PROJECT_NAME}-tester ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_nmea_2000_assembler.cpp)
+add_executable(${PROJECT_NAME}-tester ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_assembler.cpp)
 target_include_directories(${PROJECT_NAME}-tester 
   PRIVATE 
   ${CMAKE_CURRENT_SOURCE_DIR}/src
