@@ -16,7 +16,7 @@
 #include <optional>
 
 #include "CLI/CLI.hpp"
-#include "YDEN-02_extractor.hpp"
+#include "assembler.hpp"
 #include "cluon/Envelope.hpp"
 #include "cluon/OD4Session.hpp"
 #include "cluon/TCPConnection.hpp"
@@ -45,6 +45,17 @@ auto main(int argc, char **argv) -> int {
   app.callback([&]() {
     cluon::OD4Session od4{cid};
 
+    Assembler assembler{
+        [&](std::string &&d, std::chrono::system_clock::time_point &&tp) {
+          auto timestamp = cluon::time::convert(tp);
+          memo::raw::NMEA2000 m;
+          m.data(d);
+          od4.send(m, timestamp, id);
+          if (verbose) {
+            std::cout << d << std::endl;
+          }
+        }};
+
     if (is_UDP) {
       // Setup a connection to an UDP source with incoming NMEA2000
       // messages
@@ -52,21 +63,7 @@ auto main(int argc, char **argv) -> int {
           address, port,
           [&](std::string &&d, std::string && /*from*/,
               std::chrono::system_clock::time_point &&tp) noexcept {
-            auto data = extract_N2k_frame(d);
-            if (data.empty()) {
-              return;
-            }
-
-            auto timestamp = cluon::time::convert(tp);
-
-            // Publish to OD4 session
-            memo::raw::NMEA2000 m;
-            m.data(data);
-            od4.send(m, timestamp, id);
-
-            if (verbose) {
-              std::cout << data << std::endl;
-            }
+            assembler(std::move(d), std::move(tp));
           }};
 
       using namespace std::literals::chrono_literals;  // NOLINT
@@ -79,21 +76,7 @@ auto main(int argc, char **argv) -> int {
           address, port,
           [&](std::string &&d,
               std::chrono::system_clock::time_point &&tp) noexcept {
-            auto data = extract_N2k_frame(d);
-            if (data.empty()) {
-              return;
-            }
-
-            auto timestamp = cluon::time::convert(tp);
-
-            // Publish to OD4 session
-            memo::raw::NMEA2000 m;
-            m.data(data);
-            od4.send(m, timestamp, id);
-
-            if (verbose) {
-              std::cout << data << std::endl;
-            }
+            assembler(std::move(d), std::move(tp));
           },
           [&argv]() {
             std::cerr << "[" << argv[0] << "] Connection lost." << std::endl;

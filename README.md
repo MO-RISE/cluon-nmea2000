@@ -2,7 +2,9 @@
 
 Copyright 2021 RISE Research Institute of Sweden - Maritime Operations. Licensed under the Apache License Version 2.0. For details, please contact Fredrik Olsson (fredrik.x.olsson(at)ri.se).
 
-A [libcluon](https://github.com/chrberger/libcluon)-based microservice for eavesdropping on a NMEA2000 stream over either UDP or TCP. This software does not perform any parsing or validation of the N2k frames, merely acts as a one-way bridge to a libcluon group.
+A [libcluon](https://github.com/chrberger/libcluon)-based microservice for eavesdropping on a NMEA2000 stream over either UDP or TCP. This software does not perform any parsing or validation of the N2k frames, merely acts as a one-way bridge to a libcluon group. However, it is currently specifically developed for receiving data from a YDEN-02 device in the format:
+
+    04:54:52.150 R 15FD080E 36 00 02 9F 73 FF FF FF
 
 ## How do I get it?
 Each release of `cluon-nmea2000` is published as a docker image [here](https://github.com/orgs/MO-RISE/packages/container/package/cluon-nmea2000) and is publicly available.
